@@ -1,0 +1,5 @@
+# Dépendances
+node_modules/
+
+# Secrets — ne JAMAIS mettre le .env sur GitHub
+.env
