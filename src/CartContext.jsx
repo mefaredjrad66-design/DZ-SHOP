@@ -11,12 +11,12 @@ function CartProvider({ children }) {
     setCartItems(function (prev) {
       // Vérifier si le produit est déjà dans le panier
       const existant = prev.find(function (item) {
-        return item.id === product.id;
+        return item._id === product._id;
       });
       if (existant) {
         // Augmenter la quantité
         return prev.map(function (item) {
-          if (item.id === product.id) {
+          if (item._id === product._id) {
             return { ...item, quantity: item.quantity + quantity };
           }
           return item;
@@ -30,7 +30,7 @@ function CartProvider({ children }) {
   function removeFromCart(id) {
     setCartItems(function (prev) {
       return prev.filter(function (item) {
-        return item.id !== id;
+        return item._id !== id;
       });
     });
   }

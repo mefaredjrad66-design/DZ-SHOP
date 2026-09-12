@@ -1,10 +1,9 @@
-// backend/routes/produits.js — les "portes d'entrée" de l'API produits
-const express = require('express');
-const router = express.Router();
-const Produit = require('../models/Produit');
+import express from 'express';
+import Produit from '../models/Produit.js';
 
-// GET tous les produits  →  GET /api/produits
-router.get('/', async function (req, res) {
+const router = express.Router();
+
+router.get('/', async (req, res) => {
   try {
     const produits = await Produit.find();
     res.json(produits);
@@ -13,18 +12,64 @@ router.get('/', async function (req, res) {
   }
 });
 
-// GET un produit par id  →  GET /api/produits/:id
-router.get('/:id', async function (req, res) {
+router.get('/:id', async (req, res) => {
   try {
     const produit = await Produit.findById(req.params.id);
+
     if (!produit) {
-      res.status(404).json({ message: 'Produit non trouvé' });
-      return;
+      return res.status(404).json({ message: 'Produit non trouvé' });
     }
+
     res.json(produit);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-module.exports = router;
+router.post('/', async (req, res) => {
+  try {
+    const produit = new Produit(req.body);
+    const nouveauProduit = await produit.save();
+
+    res.status(201).json(nouveauProduit);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  try {
+    const produit = await Produit.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true
+      }
+    );
+
+    if (!produit) {
+      return res.status(404).json({ message: 'Produit non trouvé' });
+    }
+
+    res.json(produit);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const produit = await Produit.findByIdAndDelete(req.params.id);
+
+    if (!produit) {
+      return res.status(404).json({ message: 'Produit non trouvé' });
+    }
+
+    res.json({ message: 'Produit supprimé' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+export default router;

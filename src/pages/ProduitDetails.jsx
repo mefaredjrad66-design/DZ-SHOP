@@ -1,20 +1,42 @@
 // src/pages/ProduitDetails.jsx
 import { useParams, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import products from '../data/products.js';
+import { useState, useEffect } from 'react';
+import api from '../api/axios.js';
 import { useCart } from '../CartContext.jsx';
 
 function ProduitDetails() {
-  const { id } = useParams(); // "3" (string)
+  const { id } = useParams(); // l'_id MongoDB (une chaîne, ex: "66f1a2...")
   const navigate = useNavigate();
   const { addToCart } = useCart();
+
+  const [product, setProduct] = useState(null);
+  const [chargement, setChargement] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
 
-  // Convertir l'id string → nombre pour la comparaison
-  const product = products.find(function (p) {
-    return p.id === Number(id); // 3 === 3 ✅
-  });
+  // On va chercher CE produit précis sur le serveur, par son id
+  useEffect(function () {
+    api
+      .get('/produits/' + id)
+      .then(function (rep) {
+        setProduct(rep.data);
+      })
+      .catch(function () {
+        setProduct(null); // introuvable ou serveur éteint
+      })
+      .finally(function () {
+        setChargement(false);
+      });
+  }, [id]); // se relance si l'id de l'adresse change
+
+  // Pendant le chargement
+  if (chargement) {
+    return (
+      <div style={{ textAlign: 'center', padding: '3rem' }}>
+        <p>⏳ Chargement…</p>
+      </div>
+    );
+  }
 
   // Si le produit n'existe pas
   if (!product) {

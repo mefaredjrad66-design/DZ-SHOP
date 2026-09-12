@@ -1,12 +1,25 @@
 // src/pages/Accueil.jsx
 import { useNavigate } from 'react-router-dom';
-import products from '../data/products.js';
+import { useState, useEffect } from 'react';
+import api from '../api/axios.js';
 
 function Accueil() {
   const navigate = useNavigate();
 
-  // On met en avant les 3 premiers produits
-  const featured = products.slice(0, 3);
+  // Les produits mis en avant viennent maintenant du serveur
+  const [featured, setFeatured] = useState([]);
+
+  useEffect(function () {
+    api
+      .get('/produits')
+      .then(function (rep) {
+        // On garde les 3 premiers pour la vitrine
+        setFeatured(rep.data.slice(0, 3));
+      })
+      .catch(function () {
+        setFeatured([]); // serveur éteint → pas de vitrine, pas de crash
+      });
+  }, []);
 
   return (
     <div>
@@ -70,9 +83,9 @@ function Accueil() {
           {featured.map(function (product) {
             return (
               <div
-                key={product.id}
+                key={product._id}
                 onClick={function () {
-                  navigate(`/produit/${product.id}`);
+                  navigate(`/produit/${product._id}`);
                 }}
                 style={{
                   background: 'white',

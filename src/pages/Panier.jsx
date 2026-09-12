@@ -42,7 +42,7 @@ function Panier() {
       {cartItems.map(function (item) {
         return (
           <div
-            key={item.id}
+            key={item._id}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -75,7 +75,7 @@ function Panier() {
             </div>
             <button
               onClick={function () {
-                removeFromCart(item.id);
+                removeFromCart(item._id);
               }}
               style={{
                 background: '#fee2e2',

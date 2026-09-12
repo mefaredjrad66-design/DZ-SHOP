@@ -1,13 +1,13 @@
-// backend/seed.js — remplit la base avec tes produits (à lancer une seule fois)
-const mongoose = require('mongoose');
-require('dotenv').config();
-const Produit = require('./models/Produit');
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import Produit from './models/Produit.js';
+
+dotenv.config();
 
 const produits = [
   {
     title: 'Baggy',
-    description:
-      'Baggy est un pantalon ample et confortable, parfait pour un style décontracté. Fabriqué à partir de matériaux de haute qualité, il offre une grande liberté de mouvement et un look tendance.',
+    description: 'Pantalon ample et confortable, parfait pour un style décontracté.',
     price: 3900,
     category: 'Pantalons',
     image: '/assets/BEIGE-BAGGY MALE FRONT.jpg',
@@ -15,8 +15,7 @@ const produits = [
   },
   {
     title: 'POLO DEMI MANCH',
-    description:
-      'POLO DEMI MANCH est un polo à manches courtes, idéal pour les journées chaudes. Conçu avec des tissus respirants, il offre un confort optimal tout en restant élégant.',
+    description: 'Polo à manches courtes, idéal pour les journées chaudes.',
     price: 1500,
     category: 'Hauts',
     image: '/assets/polo-demi-manche.JPG',
@@ -24,8 +23,7 @@ const produits = [
   },
   {
     title: 'SHORT',
-    description:
-      'SHORT est un short léger et confortable, parfait pour les activités estivales. Fabriqué avec des matériaux de qualité, il assure une grande liberté de mouvement et un style décontracté.',
+    description: 'Short léger et confortable, parfait pour l’été.',
     price: 2450,
     category: 'Bas',
     image: '/assets/short-maron.jpg',
@@ -33,8 +31,7 @@ const produits = [
   },
   {
     title: 'WIDE SHORT',
-    description:
-      'WIDE SHORT est un short ample et confortable, parfait pour les activités estivales. Fabriqué avec des matériaux de qualité, il assure une grande liberté de mouvement et un style décontracté.',
+    description: 'Short ample et confortable, parfait pour l’été.',
     price: 2900,
     category: 'Bas',
     image: '/assets/wideshort-blue.JPG',
@@ -42,8 +39,7 @@ const produits = [
   },
   {
     title: 'T-SHIRT OVERSIZE',
-    description:
-      'T-SHIRT OVERSIZE est un t-shirt ample et confortable, parfait pour un style décontracté. Fabriqué à partir de matériaux de haute qualité, il offre une grande liberté de mouvement et un look tendance.',
+    description: 'T-shirt ample et confortable, parfait pour un style décontracté.',
     price: 2600,
     category: 'Hauts',
     image: '/assets/t-shirt260gsm-vert.jpg',
@@ -51,8 +47,7 @@ const produits = [
   },
   {
     title: 'T-SHIRT OVERSIZE+',
-    description:
-      'T-SHIRT OVERSIZE+ est un t-shirt ample et confortable, parfait pour un style décontracté. Fabriqué à partir de matériaux de haute qualité, il offre une grande liberté de mouvement et un look tendance.',
+    description: 'T-shirt ample et confortable, parfait pour un style décontracté.',
     price: 2900,
     category: 'Hauts',
     image: '/assets/t-shirtovrsize-beige.jpg',
@@ -62,12 +57,10 @@ const produits = [
 
 async function seed() {
   try {
-    await mongoose.connect(
-      process.env.MONGO_URI || 'mongodb://localhost:27017/dzshop'
-    );
+    await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/dzshop');
     console.log('✅ Connecté à MongoDB');
 
-    await Produit.deleteMany({}); // vide la collection d'abord
+    await Produit.deleteMany({});
     console.log('🧹 Anciens produits supprimés');
 
     await Produit.insertMany(produits);
@@ -76,7 +69,6 @@ async function seed() {
     console.log('❌ Erreur :', err.message);
   } finally {
     await mongoose.disconnect();
-    process.exit();
   }
 }
 
