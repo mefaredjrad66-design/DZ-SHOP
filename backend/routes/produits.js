@@ -1,5 +1,6 @@
 import express from 'express';
 import Produit from '../models/Produit.js';
+import { verifyToken, isAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -26,7 +27,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, isAdmin, async (req, res) => {
   try {
     const produit = new Produit(req.body);
     const nouveauProduit = await produit.save();
@@ -37,7 +38,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', verifyToken, isAdmin, async (req, res) => {
   try {
     const produit = await Produit.findByIdAndUpdate(
       req.params.id,
@@ -58,7 +59,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken, isAdmin, async (req, res) => {
   try {
     const produit = await Produit.findByIdAndDelete(req.params.id);
 

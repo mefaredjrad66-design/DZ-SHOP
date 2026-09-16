@@ -9,34 +9,118 @@ function LoginPage() {
   const { login } = useContext(AuthContext)
   const navigate = useNavigate()
 
-  function envoyer(e) {
+  async function envoyer(e) {
     e.preventDefault()
-    if (login(email, mdp)) { navigate('/') }
+    const ok = await login(email, mdp)
+    if (ok) { navigate('/') }
     else { setErreur('Email ou mot de passe incorrect') }
   }
 
+  const inputStyle = {
+    width: '100%',
+    padding: '0.75rem 1rem',
+    marginBottom: '1rem',
+    borderRadius: '10px',
+    border: '1px solid #e2e8f0',
+    fontSize: '0.95rem',
+    outline: 'none',
+    boxSizing: 'border-box',
+  }
+
   return (
-    <div className="container py-5" style={{ maxWidth: '400px' }}>
-      <h1 className="mb-4">Connexion</h1>
+    <div
+      style={{
+        minHeight: 'calc(100vh - 80px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2rem',
+      }}
+    >
+      <div
+        style={{
+          background: 'white',
+          borderRadius: '16px',
+          padding: '2.5rem',
+          maxWidth: '420px',
+          width: '100%',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+        }}
+      >
+        <h1 style={{ fontSize: '1.6rem', marginBottom: '0.25rem' }}>Connexion</h1>
+        <p style={{ color: '#64748b', marginTop: 0, marginBottom: '1.5rem' }}>
+          Content de te revoir 👋
+        </p>
 
-      {/* Compte de démonstration, pour tester */}
-      <div className="alert alert-info small">
-        Démo : <b>admin@dzshop.dz</b> / <b>123456</b>
+        <div
+          style={{
+            background: '#e0f2fe',
+            color: '#0e7490',
+            padding: '0.65rem 1rem',
+            borderRadius: '8px',
+            fontSize: '0.85rem',
+            marginBottom: '1.25rem',
+          }}
+        >
+          Démo : <b>mefaredjrad66@gmail.com</b> / <b>29455092006</b>
+        </div>
+
+        {erreur && (
+          <div
+            style={{
+              background: '#fee2e2',
+              color: '#dc2626',
+              padding: '0.75rem 1rem',
+              borderRadius: '8px',
+              marginBottom: '1rem',
+              fontSize: '0.9rem',
+            }}
+          >
+            {erreur}
+          </div>
+        )}
+
+        <form onSubmit={envoyer}>
+          <input
+            style={inputStyle}
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={function (e) { setEmail(e.target.value) }}
+            required
+          />
+          <input
+            style={inputStyle}
+            type="password"
+            placeholder="Mot de passe"
+            value={mdp}
+            onChange={function (e) { setMdp(e.target.value) }}
+            required
+          />
+          <button
+            style={{
+              width: '100%',
+              padding: '0.85rem',
+              background: '#0891b2',
+              color: 'white',
+              border: 'none',
+              borderRadius: '10px',
+              fontSize: '1rem',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+            }}
+          >
+            Se connecter
+          </button>
+        </form>
+
+        <p style={{ textAlign: 'center', marginTop: '1.5rem', marginBottom: 0, color: '#64748b' }}>
+          Pas de compte ?{' '}
+          <Link to="/register" style={{ color: '#0891b2', fontWeight: 'bold', textDecoration: 'none' }}>
+            Créer un compte
+          </Link>
+        </p>
       </div>
-
-      {erreur && <div className="alert alert-danger">{erreur}</div>}
-
-      <form onSubmit={envoyer}>
-        <input className="form-control mb-3" type="email" placeholder="Email"
-          value={email} onChange={function(e){setEmail(e.target.value)}} required />
-        <input className="form-control mb-3" type="password" placeholder="Mot de passe"
-          value={mdp} onChange={function(e){setMdp(e.target.value)}} required />
-        <button className="btn btn-primary w-100">Se connecter</button>
-      </form>
-
-      <p className="text-center mt-3 mb-0">
-        Pas de compte ? <Link to="/register">Créer un compte</Link>
-      </p>
     </div>
   )
 }

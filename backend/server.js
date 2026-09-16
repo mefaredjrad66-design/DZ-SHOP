@@ -4,6 +4,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import produitRoutes from './routes/produits.js';
+import authRoutes from './routes/auth.js';
 
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use('/assets', express.static('assets'));
 
 app.use('/api/produits', produitRoutes);
+app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
   res.send('API DZShop en ligne 🚀');

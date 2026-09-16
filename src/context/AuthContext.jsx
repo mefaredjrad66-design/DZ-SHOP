@@ -1,28 +1,54 @@
-import { createContext, useState } from 'react'
+import { createContext, useState, useEffect } from 'react'
+import api from '../api/axios.js'
 
 export const AuthContext = createContext()
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)   // null = déconnecté
+  const [user, setUser] = useState(null)
+  const [chargement, setChargement] = useState(true)
 
-  function login(email, mdp) {
-    // Vérif "en dur" pour l'instant (le vrai contrôle = partie 2)
-    if (email === 'mefaredjrad66@gmail.com' && mdp === '29455092006') {
-      setUser({ nom: 'Radi', email: email, role: 'admin' })
-      return true
+  // Relit la session sauvegardée au démarrage, sinon un refresh déconnecte tout le monde
+  useEffect(function () {
+    const token = localStorage.getItem('token')
+    const userSauvegarde = localStorage.getItem('user')
+    if (token && userSauvegarde) {
+      setUser(JSON.parse(userSauvegarde))
     }
-    return false
+    setChargement(false)
+  }, [])
+
+  async function login(email, mdp) {
+    try {
+      const rep = await api.post('/auth/login', { email, mdp })
+      localStorage.setItem('token', rep.data.token)
+      localStorage.setItem('user', JSON.stringify(rep.data.user))
+      setUser(rep.data.user)
+      return true
+    } catch {
+      return false
+    }
   }
 
-  // Inscription simulée : on crée un compte "client" et on le connecte.
-  function register(nom, email) {
-    setUser({ nom: nom, email: email, role: 'client' })
+  async function register(nom, email, mdp) {
+    try {
+      const rep = await api.post('/auth/register', { nom, email, mdp })
+      localStorage.setItem('token', rep.data.token)
+      localStorage.setItem('user', JSON.stringify(rep.data.user))
+      setUser(rep.data.user)
+      return true
+    } catch {
+      return false
+    }
   }
 
-  function logout() { setUser(null) }
+  function logout() {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    setUser(null)
+  }
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout }}>
+    <AuthContext.Provider value={{ user, login, register, logout, chargement }}>
       {children}
     </AuthContext.Provider>
   )

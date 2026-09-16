@@ -1,8 +1,17 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
 import { useCart } from '../CartContext.jsx';
+import { AuthContext } from '../context/AuthContext.jsx';
 
 function Navbar() {
   const { nbItems } = useCart();
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+    navigate('/');
+  }
 
   return (
     <header
@@ -31,10 +40,7 @@ function Navbar() {
           to="/"
           end
           style={function ({ isActive }) {
-            return {
-              color: isActive ? '#38bdf8' : '#cbd5e1',
-              textDecoration: 'none',
-            };
+            return { color: isActive ? '#38bdf8' : '#cbd5e1', textDecoration: 'none' };
           }}
         >
           Accueil
@@ -42,10 +48,7 @@ function Navbar() {
         <NavLink
           to="/produits"
           style={function ({ isActive }) {
-            return {
-              color: isActive ? '#38bdf8' : '#cbd5e1',
-              textDecoration: 'none',
-            };
+            return { color: isActive ? '#38bdf8' : '#cbd5e1', textDecoration: 'none' };
           }}
         >
           Produits
@@ -79,6 +82,40 @@ function Navbar() {
             </span>
           )}
         </Link>
+
+        {/* Défi FACILE : Connexion si personne, sinon le nom */}
+        {!user ? (
+          <Link to="/login" style={{ color: '#cbd5e1', textDecoration: 'none' }}>
+            Connexion
+          </Link>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <span style={{ color: '#38bdf8' }}>👤 {user.nom}</span>
+
+            {/* Défi BONUS : lien Admin visible seulement si role === 'admin'.
+                Pointe vers "/" pour l'instant — change to="/admin" quand cette page existera. */}
+            {user.role === 'admin' && (
+              <Link to="/" style={{ color: '#facc15', textDecoration: 'none' }}>
+                Admin
+              </Link>
+            )}
+
+            <button
+              onClick={handleLogout}
+              style={{
+                background: 'none',
+                border: '1px solid #cbd5e1',
+                color: '#cbd5e1',
+                borderRadius: '6px',
+                padding: '0.3rem 0.75rem',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+              }}
+            >
+              Déconnexion
+            </button>
+          </div>
+        )}
       </nav>
     </header>
   );
