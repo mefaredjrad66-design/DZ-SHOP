@@ -95,10 +95,10 @@ function Navbar() {
             {/* Défi BONUS : lien Admin visible seulement si role === 'admin'.
                 Pointe vers "/" pour l'instant — change to="/admin" quand cette page existera. */}
             {user.role === 'admin' && (
-              <Link to="/" style={{ color: '#facc15', textDecoration: 'none' }}>
-                Admin
-              </Link>
-            )}
+  <Link to="/ajouter-produit" style={{ color: '#facc15', textDecoration: 'none' }}>
+    + Ajouter
+  </Link>
+)}
 
             <button
               onClick={handleLogout}

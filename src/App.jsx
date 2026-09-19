@@ -11,8 +11,10 @@ import Panier from './pages/Panier.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import CheckoutPage from './pages/CheckoutPage.jsx';
+import AjouterProduit from './pages/AjouterProduit.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
+import AdminRoute from './components/AdminRoute.jsx';
 
 function App() {
   return (
@@ -34,6 +36,14 @@ function App() {
                   <PrivateRoute>
                     <CheckoutPage />
                   </PrivateRoute>
+                }
+              />
+              <Route
+                path="/ajouter-produit"
+                element={
+                  <AdminRoute>
+                    <AjouterProduit />
+                  </AdminRoute>
                 }
               />
               <Route path="*" element={<NotFoundPage />} />

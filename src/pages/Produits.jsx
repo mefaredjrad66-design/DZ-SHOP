@@ -1,22 +1,22 @@
 // src/pages/Produits.jsx
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useContext } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios.js';
+import { AuthContext } from '../context/AuthContext.jsx';
 
 function Produits() {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
-  // 3 mémoires : la liste des produits, l'état de chargement, une éventuelle erreur
   const [produits, setProduits] = useState([]);
   const [chargement, setChargement] = useState(true);
   const [erreur, setErreur] = useState('');
 
-  // Au chargement de la page, on va chercher les produits sur le serveur
   useEffect(function () {
     api
       .get('/produits')
       .then(function (rep) {
-        setProduits(rep.data); // rep.data = le tableau renvoyé par l'API
+        setProduits(rep.data);
       })
       .catch(function () {
         setErreur('Serveur injoignable — le backend est-il lancé ?');
@@ -24,9 +24,22 @@ function Produits() {
       .finally(function () {
         setChargement(false);
       });
-  }, []); // [] = une seule fois, au chargement
+  }, []);
 
-  // Pendant le chargement
+  async function supprimer(id) {
+    const confirmation = window.confirm('Supprimer ce produit ?');
+    if (!confirmation) return;
+
+    try {
+      await api.delete('/produits/' + id);
+      setProduits(function (prev) {
+        return prev.filter(function (p) { return p._id !== id });
+      });
+    } catch (err) {
+      alert(err.response?.data?.message || 'Erreur lors de la suppression');
+    }
+  }
+
   if (chargement) {
     return (
       <main style={{ padding: '3rem', textAlign: 'center' }}>
@@ -35,7 +48,6 @@ function Produits() {
     );
   }
 
-  // Si le serveur ne répond pas
   if (erreur) {
     return (
       <main style={{ padding: '3rem', textAlign: 'center' }}>
@@ -46,7 +58,26 @@ function Produits() {
 
   return (
     <main style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
-      <h2>Tous nos Produits ({produits.length})</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        <h2 style={{ margin: 0 }}>Tous nos Produits ({produits.length})</h2>
+
+        {user?.role === 'admin' && (
+          <Link
+            to="/ajouter-produit"
+            style={{
+              padding: '0.6rem 1.25rem',
+              background: '#16a34a',
+              color: 'white',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontWeight: 'bold',
+              fontSize: '0.9rem',
+            }}
+          >
+            + Ajouter un produit
+          </Link>
+        )}
+      </div>
 
       <div
         style={{
@@ -113,6 +144,25 @@ function Produits() {
                 >
                   Voir détails →
                 </button>
+
+                {user?.role === 'admin' && (
+                  <button
+                    onClick={function () { supprimer(product._id) }}
+                    style={{
+                      marginTop: '0.5rem',
+                      width: '100%',
+                      padding: '0.6rem',
+                      background: '#fee2e2',
+                      color: '#dc2626',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '0.85rem',
+                    }}
+                  >
+                    🗑️ Supprimer
+                  </button>
+                )}
               </div>
             </div>
           );
