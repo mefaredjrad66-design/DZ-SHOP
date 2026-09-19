@@ -27,6 +27,14 @@ const ProduitSchema = new mongoose.Schema(
       default: 4.5,
       min: 0,
       max: 10
+    },
+    ratingAvg: {
+      type: Number,
+      default: 0
+    },
+    ratingCount: {
+      type: Number,
+      default: 0
     }
   },
   {

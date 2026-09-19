@@ -9,17 +9,16 @@ function Accueil() {
   // Les produits mis en avant viennent maintenant du serveur
   const [featured, setFeatured] = useState([]);
 
-  useEffect(function () {
-    api
-      .get('/produits')
-      .then(function (rep) {
-        // On garde les 3 premiers pour la vitrine
-        setFeatured(rep.data.slice(0, 3));
-      })
-      .catch(function () {
-        setFeatured([]); // serveur éteint → pas de vitrine, pas de crash
-      });
-  }, []);
+ useEffect(function () {
+  api
+    .get('/produits')
+    .then(function (rep) {
+      setFeatured(rep.data.produits.slice(0, 3));
+    })
+    .catch(function () {
+      setFeatured([]);
+    });
+}, []);
 
   return (
     <div>

@@ -4,10 +4,52 @@ import { verifyToken, isAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
+// Échappe les caractères spéciaux d'une regex pour une recherche sûre
+function echapperRegex(texte) {
+  return texte.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Liste des catégories existantes — pour le filtre. AVANT /:id pour ne pas être capturé par lui.
+router.get('/categories/liste', async (req, res) => {
+  try {
+    const categories = await Produit.distinct('category');
+    res.json(categories);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 router.get('/', async (req, res) => {
   try {
-    const produits = await Produit.find();
-    res.json(produits);
+    const { recherche, page = 1, limite = 8, categorie, tri } = req.query;
+
+    const filtre = {};
+    if (recherche) {
+      filtre.title = { $regex: echapperRegex(recherche), $options: 'i' };
+    }
+    if (categorie) {
+      filtre.category = categorie;
+    }
+
+    let triMongo = { createdAt: -1 };
+    if (tri === 'prix_asc') triMongo = { price: 1 };
+    else if (tri === 'prix_desc') triMongo = { price: -1 };
+
+    const pageNum = Math.max(1, parseInt(page) || 1);
+    const limiteNum = Math.max(1, parseInt(limite) || 8);
+    const skip = (pageNum - 1) * limiteNum;
+
+    const [produits, total] = await Promise.all([
+      Produit.find(filtre).sort(triMongo).skip(skip).limit(limiteNum),
+      Produit.countDocuments(filtre),
+    ]);
+
+    res.json({
+      produits,
+      page: pageNum,
+      totalPages: Math.max(1, Math.ceil(total / limiteNum)),
+      total,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

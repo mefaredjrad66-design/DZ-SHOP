@@ -5,6 +5,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import produitRoutes from './routes/produits.js';
 import authRoutes from './routes/auth.js';
+import commandeRoutes from './routes/commandes.js';
+import avisRoutes from './routes/avis.js';
 
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
@@ -19,6 +21,8 @@ app.use('/assets', express.static('assets'));
 
 app.use('/api/produits', produitRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/commandes', commandeRoutes);
+app.use('/api/avis', avisRoutes);
 
 app.get('/', (req, res) => {
   res.send('API DZShop en ligne 🚀');

@@ -98,6 +98,8 @@ function Panier() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '1rem',
           background: 'white',
           borderRadius: '12px',
           padding: '1.5rem',
@@ -118,19 +120,37 @@ function Panier() {
             {totalPrix.toLocaleString()} DZD
           </p>
         </div>
-        <button
-          onClick={clearCart}
-          style={{
-            padding: '0.75rem 1.5rem',
-            background: '#1e293b',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-          }}
-        >
-          Vider le panier
-        </button>
+        <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <button
+            onClick={clearCart}
+            style={{
+              padding: '0.75rem 1.5rem',
+              background: '#1e293b',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+            }}
+          >
+            Vider le panier
+          </button>
+          <button
+            onClick={function () {
+              navigate('/checkout');
+            }}
+            style={{
+              padding: '0.75rem 1.5rem',
+              background: '#16a34a',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+            }}
+          >
+            Passer la commande →
+          </button>
+        </div>
       </div>
     </div>
   );
