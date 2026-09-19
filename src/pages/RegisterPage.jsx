@@ -12,19 +12,19 @@ function RegisterPage() {
   const navigate = useNavigate()
 
   async function envoyer(e) {
-    e.preventDefault()
-    if (mdp.length < 6) {
-      setErreur('Le mot de passe doit faire au moins 6 caractères')
-      return
-    }
-    if (mdp !== confirmation) {
-      setErreur('Les deux mots de passe ne sont pas identiques')
-      return
-    }
-    const ok = await register(nom, email, mdp)
-    if (ok) { navigate('/') }
-    else { setErreur('Cet email est déjà utilisé') }
+  e.preventDefault()
+  if (mdp.length < 6) {
+    setErreur('Le mot de passe doit faire au moins 6 caractères')
+    return
   }
+  if (mdp !== confirmation) {
+    setErreur('Les deux mots de passe ne sont pas identiques')
+    return
+  }
+  const res = await register(nom, email, mdp)
+  if (res.ok) { navigate('/') }
+  else { setErreur(res.message) }
+}
 
   const inputStyle = {
     width: '100%',

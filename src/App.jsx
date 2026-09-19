@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './CartContext.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import Navbar from './components/Navbar.jsx';
+import Footer from './components/Footer.jsx';
 import Accueil from './pages/Accueil.jsx';
 import Produits from './pages/Produits.jsx';
 import ProduitDetails from './pages/ProduitDetails.jsx';
@@ -10,6 +11,7 @@ import Panier from './pages/Panier.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import CheckoutPage from './pages/CheckoutPage.jsx';
+import NotFoundPage from './pages/NotFoundPage.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 
 function App() {
@@ -34,8 +36,10 @@ function App() {
                   </PrivateRoute>
                 }
               />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </main>
+          <Footer />
         </BrowserRouter>
       </CartProvider>
     </AuthProvider>

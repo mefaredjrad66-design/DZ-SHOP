@@ -10,11 +10,11 @@ function LoginPage() {
   const navigate = useNavigate()
 
   async function envoyer(e) {
-    e.preventDefault()
-    const ok = await login(email, mdp)
-    if (ok) { navigate('/') }
-    else { setErreur('Email ou mot de passe incorrect') }
-  }
+  e.preventDefault()
+  const res = await login(email, mdp)
+  if (res.ok) { navigate('/') }
+  else { setErreur(res.message) }
+}
 
   const inputStyle = {
     width: '100%',

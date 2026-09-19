@@ -28,6 +28,9 @@ router.post('/register', async (req, res) => {
       user: { nom: utilisateur.nom, email: utilisateur.email, role: utilisateur.role },
     });
   } catch (err) {
+    if (err.code === 11000) {
+      return res.status(400).json({ message: 'Cet email est déjà utilisé' });
+    }
     res.status(500).json({ message: err.message });
   }
 });
