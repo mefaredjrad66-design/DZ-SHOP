@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import Produit from '../models/Produit.js';
 import { verifyToken, isAdmin } from '../middleware/auth.js';
 
@@ -57,6 +58,10 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
+    // Un identifiant mal écrit : 404 propre, pas de plantage
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(404).json({ message: 'Produit non trouvé' });
+    }
     const produit = await Produit.findById(req.params.id);
 
     if (!produit) {
@@ -71,7 +76,9 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', verifyToken, isAdmin, async (req, res) => {
   try {
-    const produit = new Produit(req.body);
+    // On choisit les champs un par un (le navigateur ne décide pas de ratingAvg, etc.)
+    const { title, price, category, image, description, rating } = req.body;
+    const produit = new Produit({ title, price, category, image, description, rating });
     const nouveauProduit = await produit.save();
 
     res.status(201).json(nouveauProduit);
@@ -82,11 +89,15 @@ router.post('/', verifyToken, isAdmin, async (req, res) => {
 
 router.put('/:id', verifyToken, isAdmin, async (req, res) => {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(404).json({ message: 'Produit non trouvé' });
+    }
+    const { title, price, category, image, description, rating } = req.body;
     const produit = await Produit.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      { title, price, category, image, description, rating },
       {
-        new: true,
+        returnDocument: 'after',
         runValidators: true
       }
     );
@@ -103,6 +114,9 @@ router.put('/:id', verifyToken, isAdmin, async (req, res) => {
 
 router.delete('/:id', verifyToken, isAdmin, async (req, res) => {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(404).json({ message: 'Produit non trouvé' });
+    }
     const produit = await Produit.findByIdAndDelete(req.params.id);
 
     if (!produit) {

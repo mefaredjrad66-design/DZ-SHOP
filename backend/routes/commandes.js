@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import Commande from '../models/Commande.js';
 import Produit from '../models/Produit.js';
 import { verifyToken } from '../middleware/auth.js';
@@ -9,23 +10,37 @@ router.post('/', verifyToken, async (req, res) => {
   try {
     const { cartItems, nom, telephone, wilaya, adresse } = req.body;
 
-    if (!cartItems || cartItems.length === 0) {
+    if (!Array.isArray(cartItems) || cartItems.length === 0) {
       return res.status(400).json({ message: 'Panier vide' });
+    }
+    if (!telephone || !wilaya || !adresse) {
+      return res.status(400).json({ message: 'Téléphone, wilaya et adresse obligatoires' });
     }
 
     let sousTotal = 0;
     const produitsCommande = [];
 
     for (const item of cartItems) {
+      // Le navigateur envoie seulement { id, quantity } : on vérifie tout
+      if (!mongoose.isValidObjectId(item.id)) {
+        return res.status(400).json({ message: 'Produit invalide' });
+      }
+      const quantity = Number(item.quantity);
+      if (!Number.isInteger(quantity) || quantity < 1 || quantity > 99) {
+        return res.status(400).json({ message: 'Quantité invalide' });
+      }
       const produit = await Produit.findById(item.id);
-      if (!produit) continue;
+      if (!produit) {
+        return res.status(400).json({ message: 'Produit introuvable' });
+      }
 
-      sousTotal += produit.price * item.quantity;
+      // Le prix vient de NOTRE base, jamais du navigateur
+      sousTotal += produit.price * quantity;
       produitsCommande.push({
         produit: produit._id,
         title: produit.title,
         prixUnitaire: produit.price,
-        quantity: item.quantity,
+        quantity,
       });
     }
 

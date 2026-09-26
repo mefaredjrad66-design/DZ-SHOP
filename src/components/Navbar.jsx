@@ -53,6 +53,16 @@ function Navbar() {
         >
           Produits
         </NavLink>
+        {user && (
+          <NavLink
+            to="/mes-commandes"
+            style={function ({ isActive }) {
+              return { color: isActive ? '#38bdf8' : '#cbd5e1', textDecoration: 'none' };
+            }}
+          >
+            Mes commandes
+          </NavLink>
+        )}
         <Link
           to="/panier"
           style={{
@@ -82,24 +92,23 @@ function Navbar() {
             </span>
           )}
         </Link>
-
-        {/* Défi FACILE : Connexion si personne, sinon le nom */}
         {!user ? (
-          <Link to="/login" style={{ color: '#cbd5e1', textDecoration: 'none' }}>
-            Connexion
-          </Link>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <Link to="/register" style={{ color: '#cbd5e1', textDecoration: 'none' }}>
+              Inscription
+            </Link>
+            <Link to="/login" style={{ color: '#38bdf8', textDecoration: 'none' }}>
+              Connexion
+            </Link>
+          </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <span style={{ color: '#38bdf8' }}>👤 {user.nom}</span>
-
-            {/* Défi BONUS : lien Admin visible seulement si role === 'admin'.
-                Pointe vers "/" pour l'instant — change to="/admin" quand cette page existera. */}
             {user.role === 'admin' && (
-  <Link to="/ajouter-produit" style={{ color: '#facc15', textDecoration: 'none' }}>
-    + Ajouter
-  </Link>
-)}
-
+              <Link to="/ajouter-produit" style={{ color: '#facc15', textDecoration: 'none' }}>
+                + Ajouter
+              </Link>
+            )}
             <button
               onClick={handleLogout}
               style={{

@@ -12,9 +12,17 @@ dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 dotenv.config();
 
+// Sans phrase secrète, on ne démarre pas : mieux vaut planter que d'être vulnérable
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET manquant dans le fichier .env');
+}
+
 const app = express();
 
-app.use(cors());
+// Qui a le droit d'appeler l'API depuis un navigateur ?
+// En local : ton site sur le port 3000. En ligne : l'adresse de ton site (variable FRONTEND_URL).
+const origines = ['http://localhost:3000', process.env.FRONTEND_URL].filter(Boolean);
+app.use(cors({ origin: origines }));
 app.use(express.json());
 
 app.use('/assets', express.static('assets'));

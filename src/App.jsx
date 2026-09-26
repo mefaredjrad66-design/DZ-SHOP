@@ -11,6 +11,7 @@ import Panier from './pages/Panier.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import CheckoutPage from './pages/CheckoutPage.jsx';
+import MesCommandes from './pages/MesCommandes.jsx';
 import AjouterProduit from './pages/AjouterProduit.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
@@ -35,6 +36,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <CheckoutPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/mes-commandes"
+                element={
+                  <PrivateRoute>
+                    <MesCommandes />
                   </PrivateRoute>
                 }
               />

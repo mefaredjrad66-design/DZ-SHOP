@@ -1,10 +1,26 @@
 // src/CartContext.jsx — le "cerveau" du panier, partagé dans toute l'app
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 const CartContext = createContext(null);
 
 function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState([]);
+  // Au démarrage, on relit le panier sauvegardé : un F5 ne le vide plus
+  const [cartItems, setCartItems] = useState(function () {
+    try {
+      const sauvegarde = localStorage.getItem('panier');
+      return sauvegarde ? JSON.parse(sauvegarde) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // À chaque changement du panier, on le sauvegarde
+  useEffect(
+    function () {
+      localStorage.setItem('panier', JSON.stringify(cartItems));
+    },
+    [cartItems]
+  );
 
   function addToCart(product, qty) {
     const quantity = qty || 1;
